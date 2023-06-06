@@ -79,6 +79,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
         require(_address != address(0), "zero address");
         _;
     }
+    
     /**
      * @notice used set the Postpaid USDC wallet
      * @param _wallet address of Postpaid USDC wallet to be updated
@@ -87,6 +88,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     {
         postpaidUsdcWallet = _wallet;
     }
+
     /**
      * @notice used to set the Prepaid USDC wallet
      * @param _wallet address of Prepaid USDC wallet
@@ -95,6 +97,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     {
         prepaidUsdcWallet = _wallet;
     }
+
     /**
      * @notice used to set the Cefi wallet
      * @param _wallet address of Cefi wallet
@@ -111,6 +114,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     {
         coinbaseWallet = _wallet;
     }
+
     /**
      * @notice used to update the Pool contract
      * @param _newImplementation address of Pool contract
@@ -119,7 +123,9 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     function setMasterPool(address _newImplementation) public validation(_newImplementation) onlyRole(DEFAULT_ADMIN_ROLE)
     {
         masterPool = _newImplementation;
-    }    /**
+    }
+
+    /**
      * @notice used to update the LoanNFT contract
      * @param _nft address of LoanNFT contract
      **/
@@ -127,6 +133,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     {
         NFT = ILoanNFT(_nft);
     }
+
     /**
      * @notice used to update the USDC contract
      * @param _usdc address of USDC contract
@@ -135,6 +142,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     {
         usdc = IERC20Upgradeable(_usdc);
     }
+
     /**
      * @notice used to update the Defi wallet
      * @param _defiWallet address of Defi Wallet contract
@@ -143,6 +151,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     {
         defiWallet = _defiWallet;
     }
+
      /**
      * @notice used to set the percentage share of borrower, cefi, Defi
      * @param _sharePercentage array of percentage share with 1000 base
@@ -158,6 +167,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
         cefiSharePercent = _sharePercentage[1];
         defiSharePercent = _sharePercentage[2];
     }
+
     /**
      * @notice used to update the Paza contract address
      * @param _address address of Paza contract address
@@ -166,6 +176,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     {
         Paza = IPaza(_address);
     }
+
     /**
      * @notice used to deploy the bank pool
      * @param _owner address of the owner
@@ -177,6 +188,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
         pools[_bank] = impl;
         emit DeployPool(_bank, address(impl));
     }
+
     /**
      * @notice used for minting loan NFT and saking the  paza token to the bank pool
      * @param _to address to mint the tokenID (ERC 721)
@@ -202,6 +214,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
                 IPool(pools[borrowerBank[_details.borrower][ _details.refinanceTokenID]] ).transferStakedAmount(_details.borrower,borrowerBank[_details.borrower][ _details.refinanceTokenID],_details.refinanceTokenID); } }
         emit LoanCreated( _details.borrower,_details.bank,_tokenId,_details.tokenID, block.timestamp, _details.loanAmount, _details.borrowerShar );
     }
+
     /**
      * @notice used set the conditions for prepaid and postpaid
      * @param _details details of Loan
@@ -219,6 +232,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
             Paza.safeTransfer( cefiWallet, ((totalPaza) * cefiSharePercent) / PCT_BAS);
         }
     }
+
     /**
      * @notice used to transfer the Loan NFTs from the bank to investors
      * @param _lenders addresses of banks(NFT holder)
@@ -233,6 +247,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
         }
         emit PoolLoanTransferred(_lenders, _ids, _investor, block.timestamp);
     }
+
     /**
      * @notice used to buy paza
      * @param _lender addresses of banks(NFT holder)
@@ -252,6 +267,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
         emit PazaBuyFromCoinbase(_serialNo,_lender,(coinbaseBalance * 10**14) );
         }
     }
+
     /**
      * @notice used for updating the bankdetails
      * @param _bank address of bank
@@ -261,6 +277,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
         require(isWhitelisted[_bank] == true, "Bank Not Whitelisted");
         banks[_bank] = _info;
     }
+
     /**
      * @notice used for whitelisting the bank
      * @param _owner address of owner
@@ -272,6 +289,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
         _deployPool(_owner, _bank);
         isWhitelisted[_bank] = true;
     }
+
     /**
      * @notice used for blacklisting the bank
      * @param _bank address of bank
@@ -280,6 +298,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     {
         isBlacklisted[pools[_bank]] = true;
     }
+
     /**
      * @notice used to check if the bank is blacklisted
      * @param _bank address of bank
@@ -297,6 +316,7 @@ contract Factory is Initializable, BasicMetaTransaction, IFactory, AccessControl
     {
         return banks[_bank];
     }
+
     function _msgSender()  internal  view  override(Context, BasicMetaTransaction)  returns (address sender)
     {
         if (msg.sender == address(this)) {
